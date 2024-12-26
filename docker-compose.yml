@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  eureka-server:
+    build: ./Gateway-EurekaServer/EurekaServer
+    image: ambulance_project/eureka-server-docker
+    ports:
+      - "8761:8761"
+    
+  service-user:
+    build: ./service-utilisateur
+    image: ambulance_project/service-user-docker
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/    
+
+  api-cloud-gateway:
+    build: ./Gateway-EurekaServer/Gateway
+    ports:
+      - "8888:8888"
+    depends_on: 
+      - eureka-server
+      - service-user
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
