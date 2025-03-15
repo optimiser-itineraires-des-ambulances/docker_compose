@@ -10,12 +10,42 @@ services:
     build: ./service-utilisateur
     image: ambulance_project/service-user-docker
     ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/   
+  service-hopitaux:
+    build: ./service-hopitaux
+    image: ambulance_project/service-hopitaux-docker
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/     
+  service-ambulance:
+    build: ./service-ambulance
+    image: ambulance_project/service-ambulance-docker
+    ports:
       - "8081:8081"
     depends_on:
       - eureka-server
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/    
-
+      SPRING_DATA_MONGODB_URI: mongodb+srv://itineraire:itineraire2025@clusteritineraires.unjs3.mongodb.net/ambulancedb?ssl=true
+  
+  service-trajet:
+    build: ./service-trajets
+    image: ambulance_project/service-trajet-docker
+    ports:
+      - "8089:8089"
+    depends_on:
+      - eureka-server
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/    
+      SPRING_DATA_MONGODB_URI: mongodb+srv://itineraire:itineraire2025@clusteritineraires.unjs3.mongodb.net/trajetsdb?ssl=true
+  
   api-cloud-gateway:
     build: ./Gateway-EurekaServer/Gateway
     ports:
@@ -23,5 +53,25 @@ services:
     depends_on: 
       - eureka-server
       - service-user
+      - service-hopitaux
+      - service-ambulance
+      - service-trajet
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+# Angular frontend service
+  angular-frontend:
+    build:
+      context: ./FrontendAngular
+    image: ambulance_project/angular-docker
+    ports:
+      - "4200:80"
+    container_name: angular-frontend
+
+  # Flutter frontend service
+  flutter-frontend:
+    build:
+      context: ./Flutter_Front/frontend_optimisation_des_trajets 
+    image: ambulance_project/flutter-docker
+    ports:
+      - "8090:80"
+    container_name: flutter-frontend

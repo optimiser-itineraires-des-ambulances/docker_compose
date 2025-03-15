@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "shared-db",
+            "Group": "ambulance-project",
+            "Host": "pg-109f44ed-emsi-98f3.h.aivencloud.com",
+            "Port": 18061,
+            "MaintenanceDB": "defaultdb",
+            "Username": "avnadmin",
+            "SSLMode": "require"
+        }
+    }
+}
